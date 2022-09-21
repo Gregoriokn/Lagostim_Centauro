@@ -19,3 +19,27 @@ entity memory is
         data_out : out std_logic_vector(data_width-1 downto 0)
  );
 end entity;
+
+architecture Behavioral of memory is 
+
+begin
+    process
+        type mem_t is array (2^addr_width) of bit_vector(data_width-1 downto 0);
+        signal mem : mem_t;
+
+    begin
+
+        for i in address loop
+            mem(i) <= data_in;
+        end loop;
+        loop
+            wait on clock, data_read, data_write, data_in;
+            if data_read = '1' then
+                data_out <= mem(data_addr);
+            end if;
+            if data_write then
+                mem(data_addr) := data_in;
+            end if ;
+        end loop;
+    end process;
+end;
