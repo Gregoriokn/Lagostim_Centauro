@@ -14,7 +14,7 @@ entity memory is
         -- Data address given to memory
         data_addr : in std_logic_vector(addr_width-1 downto 0);
         -- Data sent from memory when data_read = '1' and data_write = '0'
-        data_in : in std_logic_vector(data_width-1 downto 0);
+        data_in : out std_logic_vector((data_width*4)-1 downto 0);
         -- Data sent to memory when data_read = '0' and data_write = '1'
         data_out : out std_logic_vector(data_width-1 downto 0)
  );
@@ -27,10 +27,10 @@ begin
         --cria matriz de 2^16 pos com cara uma de tamanho 8 bits--
         type mem_t is array (2^addr_width) of std_logic_vector(data_width-1 downto 0);
         signal mem : mem_t;
-
+ 
     begin
         loop
-            wait on clock, data_read, data_write, data_in;
+            wait on clock;
             if data_read = '1' then 
                 data_out <= mem(data_addr);
             end if;

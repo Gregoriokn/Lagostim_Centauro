@@ -1,5 +1,6 @@
 library ieee;
-use ieee.std_logic_1164;
+use ieee.std_logic_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 entity cpu is 
     generic (
@@ -10,6 +11,7 @@ entity cpu is
         clock: in std_logic; -- Clock signal
         halt : in std_logic; -- Halt processor execution when '1'
         ---- Begin Memory Signals ---
+
          -- Instruction byte received from memory
         instruction_in : in std_logic_vector(data_width-1 downto 0);
         -- Instruction address given to memory
@@ -17,10 +19,11 @@ entity cpu is
 
         data_read : out std_logic; -- When '1', read data from memory
         data_write: out std_logic; -- When '1', write data to memory
+
         -- Data address given to memory
         data_addr : out std_logic_vector(addr_width-1 downto 0);
         -- Data sent from memory when data_read = '1' and data_write = '0'
-        data_in : in std_logic_vector(data_width-1 downto 0);
+        data_in : out std_logic_vector((data_width*4)-1 downto 0);
         -- Data sent to memory when data_read = '0' and data_write = '1'
         data_out : in std_logic_vector(data_width-1 downto 0);
         ---- End Memory Signals ---
@@ -59,19 +62,135 @@ constant JMP      : std_logic_vector(3 DOWNTO 0):="1111"; --Desempilha Op1(2 byt
 signal IP :std_logic_vector(2^addr_width) := "0000000000000000"
 signal SP :std_logic_vector(data_width)
 
+signal ir : in std_logic_vector(data_width-1 downto 0);
+
+--flags--
+
+--flag para operar na memoria--
+
+--flag para operar na alu--
+
+--flag para decode--
+
+--flag para codec--
+
+
+
+
+
+
 begin
-    IP <= 
 
-    case instruction_in(7 downto 4) is
-        when HLT
+    prog_addr    <= std_logic_vector(IP);
+    mem_addr     <= ir(3 downto 0) & prog_data;
+    io_addr      <= ir(3 downto 0);
+    io_data_out  <= a;
+    mem_data_out <= a;
 
-        when IN_
+fetch : process(clock,)
+            begin
+                if rising_edge(clk) and phase = FETCH_PHASE then
+                    ir <= instruction_in;
+              end if;
+            end process;
 
-        when OUT_
-
-        WHEN 
 
 
+decode: process()
+            begin
 
 
-end architecture;
+
+
+
+
+            end decode;
+
+
+
+
+
+
+
+execute : process()
+            begin
+
+                    case instruction_in(7 downto 4) is
+                        when HLT
+
+                        WHEN IN_                
+                        halt <= '1';
+                        read_signal <= '1';
+                        write_signal <= '0';
+                        --fazer pulso--
+                        interrupt <=
+
+                        when OUT_
+
+                        when PUSHIP 
+
+                        when PUSH_IMM
+
+                        when DROP
+
+                        when DUP
+
+                        when ADD 
+                        -- recebe da mem--
+                        op1 <= data_in(addr)
+                        op2  <= data_in(addr+1)
+
+                        -- desempilha da DMEM--
+                        drop(addr)
+                        drop(addr+1)
+
+                        --opera--
+                        aux <= std_logic_vector(to_signed( (to_integer(signed(A)) + to_integer(signed(B)) ),N) );
+                        --empilha--
+                        data_out(addr) <= aux;
+
+                        when SUB
+                         -- recebe da mem--
+                         op1 <= data_in(addr)
+                         op  <= data_in(addr+1)
+ 
+                         -- desempilha da DMEM--
+                         drop(addr)
+                         drop(addr+1)
+ 
+                         --opera--
+                         aux <= std_logic_vector(to_signed( (to_integer(signed(A)) - to_integer(signed(B)) ),N) )
+                         --empilha--
+                         data_out(addr) <= aux;
+
+                        when NAND_
+
+                        when SLT 
+
+                        when SHR
+
+                        when JEQ
+
+                        when JMP 
+        end execute;
+
+Write_back :process()
+                begin
+
+
+
+
+
+                end Write_back;
+
+
+
+
+
+
+
+
+end;
+
+
+-- lembrar passos, fetch , decode, execute, write-back(buscar instrucoes, decodificar, executar, escrever na memoria resultado)

@@ -10,6 +10,30 @@ entity soc is
         started: in std_logic -- Start execution when '1'
 );
 end entity;
+
+--criar sinais aux para conectar entidades--
+
+architecture strutural of soc is 
+
+
+
+
+
+begin 
+
+-- compartilhar codec com cpu signal --
+
+signal Codec_D_In
+
+
+
+
+-- compartilhar dados da men com cpu --
+
+signal 
+
+
+
 -- instanciar 2 memorias
 Imem  : entity work.memory(behavioral)
             generic map(addr_width => 16, data_width => 8)
@@ -25,3 +49,11 @@ Cpu   :  entity work.cpu(Behavioral)
 -- usar codec--
 Codec :  entity work.codec(Behavioral)
             port map (clock => clock, interrupt=> , read_signal=> , write_signal=> , valid=>, codec_data_in=> , codec_data_out=>);
+
+
+
+end architecture;
+
+
+--As entidades mem, codec e soc possuem sinais relativos aos presentes
+--na entidade cpu e que devem ser interligados entre si.
