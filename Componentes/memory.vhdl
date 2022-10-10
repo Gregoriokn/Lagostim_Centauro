@@ -16,7 +16,7 @@ entity memory is
         -- Data address given to memory
         data_addr : in std_logic_vector(addr_width-1 downto 0);
         -- Data sent from memory when data_read = '1' and data_write = '0'
-        data_in : out std_logic_vector(data_width-1 downto 0);
+        data_in : in std_logic_vector(data_width-1 downto 0);
         -- Data sent to memory when data_read = '0' and data_write = '1'
         data_out : out std_logic_vector((data_width*4)-1 downto 0)
  );
