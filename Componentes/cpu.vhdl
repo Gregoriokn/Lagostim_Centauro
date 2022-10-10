@@ -10,8 +10,8 @@ entity cpu is
     port (
         clock: in std_logic; -- Clock signal
         halt : in std_logic; -- Halt processor execution when '1'
+        
         ---- Begin Memory Signals ---
-
          -- Instruction byte received from memory
         instruction_in : in std_logic_vector(data_width-1 downto 0);
         -- Instruction address given to memory

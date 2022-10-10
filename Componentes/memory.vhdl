@@ -20,11 +20,11 @@ entity memory is
  );
 end entity;
 
-architecture Behavioral of memory is 
+architecture behavioral of memory is 
 
 begin
     process(clock,data_read,data_write)
-        --cria matriz de 2^16 pos com cara uma de tamanho 8 bits--
+        --cria matriz de 2^16 pos com cada uma de tamanho 8 bits--
         type mem_t is array (2^addr_width) of std_logic_vector(data_width-1 downto 0);
         signal mem : mem_t;
  
