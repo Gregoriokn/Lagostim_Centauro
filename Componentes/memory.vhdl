@@ -23,8 +23,8 @@ entity memory is
 end entity;
 
 architecture behavioral of memory is 
---cria matriz de 2^16 pos com cada uma de tamanho 8 bits--
-type mem_type is array (0 to 2**addr_width) of std_logic_vector(data_width-1 downto 0);
+--Cria matriz de 2^16 posições com cada uma de tamanho 8 bits--
+type mem_type is array (0 to 2**addr_width-1) of std_logic_vector(data_width-1 downto 0);
 signal mem: mem_type
     := (others => (others => '0'));  -- Inicializa toda a memória com 0;
 
