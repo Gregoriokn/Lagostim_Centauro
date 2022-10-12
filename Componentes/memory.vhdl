@@ -15,10 +15,10 @@ entity memory is
         data_write: in std_logic;-- When '1', write data to memory
         -- Data address given to memory
         data_addr: in std_logic_vector(addr_width-1 downto 0);
-        -- Data sent from memory when data_read = '1' and data_write = '0'
+        -- Data sent to memory when data_read = '0' and data_write = '1' (comentário corrigido)
         data_in: in std_logic_vector(data_width-1 downto 0);
-        -- Data sent to memory when data_read = '0' and data_write = '1'
-        data_out:  out std_logic_vector((data_width*4)-1 downto 0)
+        -- Data sent from memory when data_read = '1' and data_write = '0' (comentário corrigido)
+        data_out: out std_logic_vector((data_width*4)-1 downto 0)
         );
 end entity;
 
@@ -32,10 +32,10 @@ begin
     process(clock)
     begin
         if (falling_edge(clock)) then
-            if (data_read = '1') and (data_write = '0') then
-                mem(to_integer(unsigned(data_addr))) <= data_in;
-            elsif (data_write = '1') and (data_read = '0') then
-                data_out <= mem(to_integer(unsigned(data_addr))) &
+            if (data_read = '0') and (data_write = '1') then
+                mem(to_integer(unsigned(data_addr))) <= data_out;
+            elsif (data_write = '0') and (data_read = '1') then
+                data_in <= mem(to_integer(unsigned(data_addr))) &
                             mem(to_integer(unsigned(data_addr))+1) &
                             mem(to_integer(unsigned(data_addr))+2) &
                             mem(to_integer(unsigned(data_addr))+3);

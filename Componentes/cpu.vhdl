@@ -22,9 +22,9 @@ entity cpu is
 
         -- Data address given to memory
         data_addr : out std_logic_vector(addr_width-1 downto 0);
-        -- Data sent from memory when data_read = '1' and data_write = '0'
+        -- Data sent to memory when data_read = '0' and data_write = '1' (comentário corrigido)
         data_in : out std_logic_vector((data_width*4)-1 downto 0);
-        -- Data sent to memory when data_read = '0' and data_write = '1'
+        -- DData sent from memory when data_read = '1' and data_write = '0' (comentário corrigido)
         data_out : in std_logic_vector(data_width-1 downto 0);
         ---- End Memory Signals ---
 
@@ -43,7 +43,7 @@ entity cpu is
 end entity;    
 
 architecture Behavioral of cpu is 
-constant HLT      : std_logic_vector(3 DOWNTO 0):="0000"; --Interrompe execu¸c˜ao indefinidamente.--
+constant HLT      : std_logic_vector(3 DOWNTO 0):="0000"; --Interrompe execucao indefinidamente.--
 constant IN_      : std_logic_vector(3 DOWNTO 0):="0001"; --Empilha um byte recebido do codec.--   
 constant OUT_     : std_logic_vector(3 DOWNTO 0):="0010"; --Desempilha um byte e o envia para o codec.
 constant PUSHIP   : std_logic_vector(3 DOWNTO 0):="0011"; --Empilha o endere¸co armazenado no registrador IP(2 bytes, primeiro MSB e depois LSB).
