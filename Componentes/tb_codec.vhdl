@@ -4,7 +4,7 @@ use ieee.numeric_std.all;
 
 
 entity tb_codec is
-end tb_codec;
+end entity;
 
 architecture behavioral of tb_codec is
 
@@ -18,7 +18,7 @@ architecture behavioral of tb_codec is
   signal codec_data_out : std_logic_vector(7 downto 0);
 
 begin
-  codec : entity work.codec(behavioral)
+  codec : entity  work.codec(behavioral)
     port map (interrupt, read_signal, write_signal,valid,codec_data_in,codec_data_out);
 
 
@@ -46,7 +46,6 @@ begin
         assert aux1 = codec_data_out report "ERRO" severity failure;
         assert valid_aux = '1' report "ERRO valid" severity failure;
         wait for 5 ns;
-
 
     end process;
 end architecture;
