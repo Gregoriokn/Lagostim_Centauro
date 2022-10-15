@@ -25,7 +25,7 @@ begin
 
     processo_do_clock: process is
     begin
-        for i in 0 to (2**addr_width)+15 loop
+        for i in 0 to (2**addr_width)*2+20 loop
             clock <= '0';
             wait for 5 ns;
             clock <= '1';
@@ -36,32 +36,29 @@ begin
 
     estimulo_de_checagem: process is
         type mem_type is array(0 to 2**addr_width-1) of std_logic_vector(data_width-1 downto 0);
-        variable resultado: mem_type
-            := (others => (others => '1'));
+        variable resultado : std_logic_vector((data_width*4)-1 downto 0) := (others => '1');
     begin
         -- ESCRITA
         data_write <= '1';
         data_read <= '0';
-        wait for 5 ns;
+
         for i in 0 to 2**addr_width-1 loop
+            wait until falling_edge(clock);
             data_addr <= std_logic_vector(to_unsigned(i, addr_width));
             data_in <= std_logic_vector(to_unsigned(255, data_width));
-            wait for 5 ns;
         end loop;
         
-        -- -- LEITURA
-        -- data_write <= '0';
-        -- data_read <= '1';
-        -- wait for 5 ns;
-        -- for i in 0 to 2**addr_width-1 loop
-        --     data_addr <= std_logic_vector(to_unsigned(i, addr_width));
-            
-        --     wait for 5 ns;
-        -- end loop;
-
-
-        
+         -- LEITURA
+         data_addr <= std_logic_vector(to_unsigned(0, addr_width));
+         data_write <= '0';
+         data_read <= '1';
+         for i in 0 to 2**addr_width-4 loop
+            wait until falling_edge(clock);
+            data_addr <= std_logic_vector(to_unsigned(i, addr_width));
+            wait for 10 ns;
+                assert data_out = resultado report "ERRO" severity failure;
+         end loop;
         wait;
-
+        
     end process;
 end behavioral;
