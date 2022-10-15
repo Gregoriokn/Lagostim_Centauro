@@ -1,0 +1,4 @@
+v 3
+file . "codec.vhdl" "20221015060230.000" "20221015020250.245":
+  entity codec at 1( 0) + 0 on 13;
+  architecture behavior of codec at 19( 509) + 0 on 14;
