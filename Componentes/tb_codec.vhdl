@@ -23,29 +23,32 @@ begin
 
 
     estimulo_de_checagem : process is
-        variable aux : std_logic_vector(7 downto 0) := (others => '1');
+        variable aux : std_logic_vector(7 downto 0) := "00100010";
         variable aux1 : std_logic_vector(7 downto 0);
-        variable valid_aux : std_logic ;
+        variable valid_aux : std_logic := '1';
 
     begin   
      -- ESCRITA
         write_signal <= '1';
         read_signal <= '0';
         interrupt <= '1';
-
-        wait for 5 ns;
         codec_data_in <= aux;
-        assert valid_aux = '1' report "ERRO valid" severity failure;
         wait for 5 ns;
+        assert valid_aux = valid report "ERRO valid" severity failure;
+        interrupt <= '0';
+        wait for 2 ns;
+        
 
     -- -- LEITURA
         write_signal <= '0';
         read_signal <= '1';
         interrupt <= '1';
         wait for 5 ns;
-        assert aux1 = codec_data_out report "ERRO" severity failure;
-        assert valid_aux = '1' report "ERRO valid" severity failure;
-        wait for 5 ns;
-
+        assert aux = codec_data_out report "ERRO" severity failure;
+        assert valid_aux = valid report "ERRO valid" severity failure;
+       wait for 5 ns;
+        interrupt <= '0';
+        wait for 2 ns;
+      
     end process;
 end architecture;

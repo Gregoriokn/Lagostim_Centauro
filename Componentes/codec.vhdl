@@ -18,7 +18,7 @@ end entity;
 
 architecture behavioral of codec is
     constant Aquivo_entrada :string  := "Dados.dat";
-    constant Aquivo_saida   :string  := "Dados.dat"
+    constant Aquivo_saida   :string  := "Dados.dat";
     file fptrd : text;
     file fptrwr: text;
 begin
@@ -29,6 +29,7 @@ begin
         variable file_line_wr   :line;
         variable lido_out     :integer;
         variable escrito_in      :integer;
+        variable aux_valid : std_logic := '0';
     begin
 
         if(read_signal = '1' and write_signal = '0') then
@@ -40,6 +41,7 @@ begin
                 end loop;
                 codec_data_out <= std_logic_vector(to_signed(lido_out, 8));
                 file_close(fptrd);
+                aux_valid := '1';
             end if;
         elsif (read_signal = '0' and write_signal = '1') then
             file_open(statwr, fptrwr, Aquivo_saida, write_mode);
@@ -47,9 +49,11 @@ begin
                 write(file_line_wr, to_integer(unsigned(codec_data_in)));
                 writeline(fptrwr, file_line_wr);
                 file_close(fptrwr);
+                aux_valid := '1';
+                
             end if;
         end if;
-        valid <= '1';
+        valid <= aux_valid;
     end process;
 
 
