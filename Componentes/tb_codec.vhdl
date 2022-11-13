@@ -46,9 +46,9 @@ begin
         wait for 5 ns;
         assert aux = codec_data_out report "ERRO" severity failure;
         assert valid_aux = valid report "ERRO valid" severity failure;
-       wait for 5 ns;
+        wait for 5 ns;
         interrupt <= '0';
         wait for 2 ns;
-      
+      wait;   
     end process;
 end architecture;

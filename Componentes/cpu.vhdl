@@ -1,4 +1,4 @@
-library ieee;
+`library ieee;
 use ieee.std_logic_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
@@ -17,15 +17,15 @@ entity cpu is
         -- Instruction address given to memory
         instruction_addr: out std_logic_vector(addr_width-1 downto 0);
 
-        data_read : out std_logic; -- When '1', read data from memory
-        data_write: out std_logic; -- When '1', write data to memory
+        mem_data_read : out std_logic; -- When '1', read data from memory
+        mem_data_write: out std_logic; -- When '1', write data to memory
 
         -- Data address given to memory
-        data_addr : out std_logic_vector(addr_width-1 downto 0);
-        -- Data sent to memory when data_read = '0' and data_write = '1' (comentário corrigido)
-        data_in : out std_logic_vector((data_width*4)-1 downto 0);
-        -- DData sent from memory when data_read = '1' and data_write = '0' (comentário corrigido)
-        data_out : in std_logic_vector(data_width-1 downto 0);
+        mem_data_addr : out std_logic_vector(addr_width-1 downto 0);
+        -- Data sent to memory when mem_data_read = '0' and mem_data_write = '1' (comentário corrigido)
+        mem_data_in : out std_logic_vector((data_width*4)-1 downto 0);
+        -- Data sent from memory when mem_data_read = '1' and mem_data_write = '0' (comentário corrigido)
+        mem_data_out : in std_logic_vector(data_width-1 downto 0);
         ---- End Memory Signals ---
 
         ---- Begin Codec Signals ---
@@ -147,7 +147,7 @@ execute : process()
                         --opera--
                         aux <= std_logic_vector(to_signed( (to_integer(signed(A)) + to_integer(signed(B)) ),N) );
                         --empilha--
-                        data_out(addr) <= aux;
+                        mem_data_out(addr) <= aux;
 
                         when SUB
                          -- recebe da mem--
@@ -161,7 +161,7 @@ execute : process()
                          --opera--
                          aux <= std_logic_vector(to_signed( (to_integer(signed(A)) - to_integer(signed(B)) ),N) )
                          --empilha--
-                         data_out(addr) <= aux;
+                         mem_data_out(addr) <= aux;
 
                         when NAND_
 
