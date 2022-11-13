@@ -12,9 +12,9 @@ entity cpu is
         halt : in std_logic; -- Halt processor execution when '1'
         
         ---- Begin Memory Signals ---
-         -- Instruction byte received from memory
+         -- Instruction` byte received from memory
         instruction_in : in std_logic_vector(data_width-1 downto 0);
-        -- Instruction address given to memory
+        -- Instruction address given to memory``
         instruction_addr: out std_logic_vector(addr_width-1 downto 0);
 
         mem_data_read : out std_logic; -- When '1', read data from memory
@@ -23,7 +23,7 @@ entity cpu is
         -- Data address given to memory
         mem_data_addr : out std_logic_vector(addr_width-1 downto 0);
         -- Data sent to memory when mem_data_read = '0' and mem_data_write = '1' (comentário corrigido)
-        mem_data_in : out std_logic_vector((data_width*4)-1 downto 0);
+        mem_data_in : out std_logic_vector((data_width*4)-1 do`wnto 0);
         -- Data sent from memory when mem_data_read = '1' and mem_data_write = '0' (comentário corrigido)
         mem_data_out : in std_logic_vector(data_width-1 downto 0);
         ---- End Memory Signals ---
@@ -50,13 +50,13 @@ constant PUSHIP   : std_logic_vector(3 DOWNTO 0):="0011"; --Empilha o endere¸co
 constant PUSH_IMM : std_logic_vector(3 DOWNTO 0):="0100"; --Empilha um byte contendo imediato (armazenado nos 4 bits menos significativos da instru¸c˜ao).
 constant DROP     : std_logic_vector(3 DOWNTO 0):="0101"; --Elimina um elemento da pilha
 constant DUP      : std_logic_vector(3 DOWNTO 0):="0110"; --Reempilha o elemento no topo da pilha
-constant ADD      : std_logic_vector(3 DOWNTO 0):="0111"; --Desempilha Op1 e Op2 e empilha (Op1 + Op2).
-constant SUB      : std_logic_vector(3 DOWNTO 0):="1000"; --Desempilha Op1 e Op2 e empilha (Op1 − Op2).
-constant NAND_    : std_logic_vector(3 DOWNTO 0):="1001"; --Desempilha Op1 e Op2 e empilha NAND(Op1, Op2).
-constant SLT      : std_logic_vector(3 DOWNTO 0):="1010"; --Desempilha Op1 e Op2 e empilha (Op1 < Op2).
-constant SHL      : std_logic_vector(3 DOWNTO 0):="1011"; --Desempilha Op1 e Op2 e empilha (Op1 ≪ Op2).
-constant SHR      : std_logic_vector(3 DOWNTO 0):="1100"; --Desempilha Op1 e Op2 e empilha (Op1 ≫ Op2).
-constant JEQ      : std_logic_vector(3 DOWNTO 0):="1101"; --Desempilha Op1(1 byte), Op2(1 byte) e Op3(2 bytes); Verifica se (Op1 = Op2), caso positivo soma Op3 no registrador IP.
+constant ADD      : std_logic_vector(3 DOWNTO 0):="1000"; --Desempilha Op1 e Op2 e empilha (Op1 + Op2).
+constant SUB      : std_logic_vector(3 DOWNTO 0):="1001"; --Desempilha Op1 e Op2 e empilha (Op1 − Op2).
+constant NAND     : std_logic_vector(3 DOWNTO 0):="1010"; --Desempilha Op1 e Op2 e empilha NAND(Op1, Op2).
+constant SLT      : std_logic_vector(3 DOWNTO 0):="1011"; --Desempilha Op1 e Op2 e empilha (Op1 < Op2).
+constant SHL      : std_logic_vector(3 DOWNTO 0):="1100"; --Desempilha Op1 e Op2 e empilha (Op1 ≪ Op2).
+constant SHR      : std_logic_vector(3 DOWNTO 0):="1101"; --Desempilha Op1 e Op2 e empilha (Op1 ≫ Op2).
+constant JEQ      : std_logic_vector(3 DOWNTO 0):="1110"; --Desempilha Op1(1 byte), Op2(1 byte) e Op3(2 bytes); Verifica se (Op1 = Op2), caso positivo soma Op3 no registrador IP.
 constant JMP      : std_logic_vector(3 DOWNTO 0):="1111"; --Desempilha Op1(2 bytes) e o atribui no registrador IP
 
 signal IP :std_logic_vector(2^addr_width) := "0000000000000000"
