@@ -105,8 +105,13 @@ begin
                     when op_JMP => 
 
                     when others =>
+                        report "UNKOWN OPCODE!" severity failure;
                 end case;
+
+                IP <= std_logic_vector(unsigned(IP) + 1); --Proxima instrucao
+            
         end if;
+
     end process;
 end architecture;
 
