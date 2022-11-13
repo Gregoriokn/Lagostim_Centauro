@@ -1,4 +1,4 @@
-`library ieee;
+library ieee;
 use ieee.std_logic_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
@@ -12,9 +12,9 @@ entity cpu is
         halt : in std_logic; -- Halt processor execution when '1'
         
         ---- Begin Memory Signals ---
-         -- Instruction` byte received from memory
+         -- Instruction byte received from memory
         instruction_in : in std_logic_vector(data_width-1 downto 0);
-        -- Instruction address given to memory``
+        -- Instruction address given to memory
         instruction_addr: out std_logic_vector(addr_width-1 downto 0);
 
         mem_data_read : out std_logic; -- When '1', read data from memory
@@ -23,7 +23,7 @@ entity cpu is
         -- Data address given to memory
         mem_data_addr : out std_logic_vector(addr_width-1 downto 0);
         -- Data sent to memory when mem_data_read = '0' and mem_data_write = '1' (comentário corrigido)
-        mem_data_in : out std_logic_vector((data_width*4)-1 do`wnto 0);
+        mem_data_in : out std_logic_vector((data_width*4)-1 downto 0);
         -- Data sent from memory when mem_data_read = '1' and mem_data_write = '0' (comentário corrigido)
         mem_data_out : in std_logic_vector(data_width-1 downto 0);
         ---- End Memory Signals ---
@@ -42,11 +42,11 @@ entity cpu is
 );
 end entity;    
 
-architecture Behavioral of cpu is 
+architecture behavioral of cpu is 
 constant HLT      : std_logic_vector(3 DOWNTO 0):="0000"; --Interrompe execucao indefinidamente.--
 constant IN_      : std_logic_vector(3 DOWNTO 0):="0001"; --Empilha um byte recebido do codec.--   
 constant OUT_     : std_logic_vector(3 DOWNTO 0):="0010"; --Desempilha um byte e o envia para o codec.
-constant PUSHIP   : std_logic_vector(3 DOWNTO 0):="0011"; --Empilha o endere¸co armazenado no registrador IP(2 bytes, primeiro MSB e depois LSB).
+constant PUSHIP   : std_logic_vector(3 DOWNTO 0):="0011"; --Empilha o endereço armazenado no registrador IP(2 bytes, primeiro MSB e depois LSB).
 constant PUSH_IMM : std_logic_vector(3 DOWNTO 0):="0100"; --Empilha um byte contendo imediato (armazenado nos 4 bits menos significativos da instru¸c˜ao).
 constant DROP     : std_logic_vector(3 DOWNTO 0):="0101"; --Elimina um elemento da pilha
 constant DUP      : std_logic_vector(3 DOWNTO 0):="0110"; --Reempilha o elemento no topo da pilha
@@ -59,57 +59,20 @@ constant SHR      : std_logic_vector(3 DOWNTO 0):="1101"; --Desempilha Op1 e Op2
 constant JEQ      : std_logic_vector(3 DOWNTO 0):="1110"; --Desempilha Op1(1 byte), Op2(1 byte) e Op3(2 bytes); Verifica se (Op1 = Op2), caso positivo soma Op3 no registrador IP.
 constant JMP      : std_logic_vector(3 DOWNTO 0):="1111"; --Desempilha Op1(2 bytes) e o atribui no registrador IP
 
-signal IP :std_logic_vector(2^addr_width) := "0000000000000000"
-signal SP :std_logic_vector(data_width)
+signal IP :std_logic_vector(addr_width) := "0000000000000000";
+signal SP :std_logic_vector(data_width) := "0000000000000000";
 
-signal ir : in std_logic_vector(data_width-1 downto 0);
-
---flags--
-
---flag para operar na memoria--
-
---flag para operar na alu--
-
---flag para decode--
-
---flag para codec--
-
-
-
-
-
+signal instruction : in std_logic_vector(addr_width-1 downto 0);
+signal opcode : in std_logic_vector(4);
 
 begin
 
-    prog_addr    <= std_logic_vector(IP);
-    mem_addr     <= ir(3 downto 0) & prog_data;
-    io_addr      <= ir(3 downto 0);
-    io_data_out  <= a;
-    mem_data_out <= a;
-
-fetch : process(clock,)
-            begin
-                if rising_edge(clk) and phase = FETCH_PHASE then
-                    ir <= instruction_in;
-              end if;
-            end process;
-
-
-
-decode: process()
-            begin
-
-
-
-
-
-
-            end decode;
-
-
-
-
-
+decode : process(clock)
+        begin
+            if rising_edge(clk) then
+                opcode <= instruction_in(addr_width-1 downto addr_width-4);
+            end if;
+end decode;
 
 
 execute : process()
@@ -182,13 +145,6 @@ Write_back :process()
 
 
                 end Write_back;
-
-
-
-
-
-
-
 
 end;
 
