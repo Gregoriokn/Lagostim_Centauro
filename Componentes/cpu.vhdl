@@ -67,7 +67,9 @@ signal opcode : std_logic_vector(3 downto 0);
 
 begin
 
-    execute : process(clock)
+    execute : process -- NÃO colocar lista de sensibilidade
+
+    variable data_temp1, data_temp2 : std_logic_vector(data_width-1 downto 0);
     begin
         if rising_edge(clock) then
             --Manda valor do registrador IP pra IMEM
@@ -77,24 +79,119 @@ begin
             --Executa opcode
                 case opcode is
                     when op_HLT => 
+                        wait until halt = '0';
+                        report "HALT";
 
                     when op_IN => 
+                        codec_read <= '1';
+                        codec_write <= '0';
+                        codec_interrupt <= '1','0' after 2 ns;
+                        wait until codec_valid = '1';
 
                     when op_OUT => 
+                        codec_read <= '0';
+                        codec_write <= '1';
+                        codec_interrupt <= '1','0' after 2 ns;
+                        wait until codec_valid = '1';
 
                     when op_PUSHIP => 
+                        mem_data_read <= '0';
+                        mem_data_write <= '1';
+
+                        SP <= std_logic_vector(unsigned(SP) + 1); --incrementa ponteiro da pilha
+                        mem_data_addr <= SP;
+                        mem_data_in <= IP(addr_width-1 downto addr_width-8); --empilha byte mais significativo
+                        wait for 1 ns;
+
+                        
+                        SP <= std_logic_vector(unsigned(SP) + 1); --incrementa ponteiro da pilha
+                        mem_data_addr <= SP;
+                        mem_data_in <= IP(addr_width-9 downto 0); --empilha byte menos significativo
+                        wait for 1 ns;
 
                     when op_PUSH_IMM => 
+                        mem_data_read <= '0';
+                        mem_data_write <= '1';
+
+                        SP <= std_logic_vector(unsigned(SP) + 1); --incrementa ponteiro da pilha
+                        mem_data_addr <= SP;
+                        mem_data_in <= IP(addr_width-9 downto 0);
+                        wait for 1 ns;
 
                     when op_DROP => 
+                        mem_data_read <= '0';
+                        mem_data_write <= '1';
+                        mem_data_in <= std_logic_vector(to_unsigned(0,data_width));
+                        SP <= std_logic_vector(unsigned(SP) - 1); --decrementa ponteiro da pilha
+                        mem_data_addr <= SP;
+                        wait for 1 ns;
 
-                    when op_DUP => 
+                    when op_DUP =>
+                        mem_data_read <= '1';
+                        mem_data_write <= '0';
+                        data_temp1 := mem_data_out; --copia topo da pilha pra temp
+                        wait for 1 ns;
+
+                        mem_data_read <= '0';
+                        mem_data_write <= '1';
+                        SP <= std_logic_vector(unsigned(SP) + 1); --incrementa ponteiro da pilha
+                        mem_data_addr <= SP;
+                        mem_data_in <= data_temp1; --copia temp pra novo topo
+                        wait for 1 ns;
 
                     when op_ADD => 
+                        mem_data_read <= '1';
+                        mem_data_write <= '0';
+                        data_temp1 := mem_data_out; --copia topo da pilha pra temp1
+                        wait for 1 ns;
 
-                    when op_SUB => 
+                        SP <= std_logic_vector(unsigned(SP) - 1); --decrementa ponteiro da pilha
+                        mem_data_addr <= SP;
+                        wait for 1 ns;
 
-                    when op_NAND => 
+                        data_temp2 := mem_data_out; --copia topo da pilha pra temp2
+                        data_temp1 := std_logic_vector(signed(data_temp1) + signed(data_temp2)); --realiza soma
+
+                        mem_data_read <= '0';
+                        mem_data_write <= '1';
+                        mem_data_in <= data_temp1; --copia soma pra novo topo
+                        wait for 1 ns;
+
+                    when op_SUB =>  
+                        mem_data_read <= '1';
+                        mem_data_write <= '0';
+                        data_temp1 := mem_data_out; --copia topo da pilha pra temp1
+                        wait for 1 ns;
+
+                        SP <= std_logic_vector(unsigned(SP) - 1); --decrementa ponteiro da pilha
+                        mem_data_addr <= SP;
+                        wait for 1 ns;
+
+                        data_temp2 := mem_data_out; --copia topo da pilha pra temp2
+                        data_temp1 := std_logic_vector(signed(data_temp1) - signed(data_temp2)); --realiza subtracao
+
+                        mem_data_read <= '0';
+                        mem_data_write <= '1';
+                        mem_data_in <= data_temp1; --copia soma pra novo topo
+                        wait for 1 ns;
+
+                    when op_NAND =>  
+                        mem_data_read <= '1';
+                        mem_data_write <= '0';
+                        data_temp1 := mem_data_out; --copia topo da pilha pra temp1
+                        wait for 1 ns;
+
+                        SP <= std_logic_vector(unsigned(SP) - 1); --decrementa ponteiro da pilha
+                        mem_data_addr <= SP;
+                        wait for 1 ns;
+
+                        data_temp2 := mem_data_out; --copia topo da pilha pra temp2
+                        data_temp1 := std_logic_vector(signed(data_temp1) nand signed(data_temp2)); --realiza operacao
+
+                        mem_data_read <= '0';
+                        mem_data_write <= '1';
+                        mem_data_in <= data_temp1; --copia soma pra novo topo
+                        wait for 1 ns;
 
                     when op_SLT => 
 
@@ -112,7 +209,9 @@ begin
             
         end if;
 
+        --wait until rising edge?
     end process;
+
 end architecture;
 
 
