@@ -78,7 +78,7 @@ end decode;
 execute : process()
             begin
 
-                    case instruction_in(7 downto 4) is
+                    case opcode is
                         when HLT
 
                         WHEN IN_                
