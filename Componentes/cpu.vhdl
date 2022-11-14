@@ -23,9 +23,9 @@ entity cpu is
         -- Data address given to memory
         mem_data_addr : out std_logic_vector(addr_width-1 downto 0);
         -- Data sent to memory when mem_data_read = '0' and mem_data_write = '1' (comentário corrigido)
-        mem_data_in : out std_logic_vector((data_width*8)-1 downto 0);
+        mem_data_in : out std_logic_vector((data_width*2)-1 downto 0);
         -- Data sent from memory when mem_data_read = '1' and mem_data_write = '0' (comentário corrigido)
-        mem_data_out : in std_logic_vector(data_width-1 downto 0);
+        mem_data_out : in std_logic_vector((data_width*4)-1 downto 0);
         ---- End Memory Signals ---
 
         ---- Begin Codec Signals ---
@@ -70,6 +70,8 @@ begin
     execute : process -- NÃO colocar lista de sensibilidade
 
     variable data_temp1, data_temp2 : std_logic_vector(data_width-1 downto 0);
+    variable data_temp3 : std_logic_vector((data_width*2)-1 downto 0);
+    variable int_temp: integer;
     begin
         if rising_edge(clock) then
             --Manda valor do registrador IP pra IMEM
@@ -193,26 +195,91 @@ begin
                         mem_data_in <= data_temp1; --copia soma pra novo topo
                         wait for 1 ns;
 
-                    when op_SLT => 
+                    when op_SLT => -- SET LESS THAN
+                        mem_data_read <= '1';
+                        mem_data_write <= '0';
+                        data_temp1 := mem_data_out; --copia topo da pilha pra temp1
+                        wait for 1 ns;
 
-                    when op_SHR => 
+                        SP <= std_logic_vector(unsigned(SP) - 1); --decrementa ponteiro da pilha
+                        mem_data_addr <= SP;
+                        wait for 1 ns;
 
-                    when op_JEQ => 
+                        data_temp2 := mem_data_out; --copia topo da pilha pra temp2
 
-                    when op_JMP => 
+                        mem_data_read <= '0';
+                        mem_data_write <= '1';
 
+                        if data_temp1 < data_temp2 then
+                            mem_data_in <= std_logic_vector(to_unsigned(1,data_width));
+                        else 
+                            mem_data_in <= std_logic_vector(to_unsigned(0,data_width));
+                        end if;
+                        wait for 1 ns;
+
+                    when op_SHR =>
+                        mem_data_read <= '1';
+                        mem_data_write <= '0';
+                        data_temp1 := mem_data_out; --copia topo da pilha pra temp1
+                        wait for 1 ns;
+
+                        SP <= std_logic_vector(unsigned(SP) - 1); --decrementa ponteiro da pilha
+                        mem_data_addr <= SP;
+                        wait for 1 ns;
+
+                        int_temp := to_integer(unsigned(mem_data_out)); --copia topo da pilha, em inteiro, pra temp2
+                        
+                        mem_data_read <= '0';
+                        mem_data_write <= '1';
+                        -- desloca n bits pra esquerda (confia)
+                            mem_data_in <= data_temp1(data_width-int_temp-1 downto 0) & std_logic_vector(to_unsigned(0,int_temp));
+                        wait for 1 ns;
+
+                    when op_JEQ =>
+                        mem_data_read <= '1';
+                        mem_data_write <= '0';
+                        data_temp1 := mem_data_out; --copia topo da pilha pra temp1
+                        wait for 1 ns;
+
+                        SP <= std_logic_vector(unsigned(SP) - 1); --decrementa ponteiro da pilha
+                        mem_data_addr <= SP;
+                        wait for 1 ns;
+
+                        data_temp2 := mem_data_out; --copia topo da pilha pra temp2
+                        SP <= std_logic_vector(unsigned(SP) - 1); --decrementa ponteiro da pilha
+                        mem_data_addr <= SP;
+                        wait for 1 ns;
+
+                        data_temp3 := mem_data_out((data_width*2)-1 downto 0); --copia dos bytes do topo da pilha para data_temp3
+
+                        mem_data_read <= '0';
+                        mem_data_write <= '1';
+                        if data_temp1 = data_temp2 then
+                            mem_data_in <= data_temp3;
+                        end if;
+                        wait for 1 ns;
+
+                    when op_JMP =>
+                        mem_data_read <= '1';
+                        mem_data_write <= '0';
+                        data_temp3 := mem_data_out((data_width*2)-1 downto 0); --copia dos bytes do topo da pilha para data_temp3
+                        wait for 1 ns;
+
+                        SP <= std_logic_vector(unsigned(SP) - 1); --decrementa ponteiro da pilha
+                        mem_data_addr <= SP;
+                        wait for 1 ns;
+                        IP <= data_temp3;
+                        wait for 1 ns;
+                        
                     when others =>
                         report "UNKOWN OPCODE!" severity failure;
                 end case;
 
                 IP <= std_logic_vector(unsigned(IP) + 1); --Proxima instrucao
-            
         end if;
 
-        --wait until rising edge?
+        wait until rising_edge(clock);
+
     end process;
 
 end architecture;
-
-
--- lembrar passos, fetch , decode, execute, write-back(buscar instrucoes, decodificar, executar, escrever na memoria resultado)
