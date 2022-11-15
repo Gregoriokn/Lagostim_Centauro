@@ -67,7 +67,7 @@ load: process
             read(text_line,auxiliar);
             load_aux(15 downto 8) <= to_stdlogicvector(auxiliar);
             instruction_addr <= endereco;
-            report "teste  " & integer'image(to_integer(signed(load_aux)));
+            --report "teste  " & integer'image(to_integer(signed(load_aux)));
             endereco := std_logic_vector(unsigned(endereco) + 1);
         end if;
         wait on clock;
