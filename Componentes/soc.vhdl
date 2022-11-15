@@ -51,7 +51,7 @@ Dmem  : entity work.memory(behavioral)
 -- usar a cpu--
 Cpu   :  entity work.cpu(behavioral)
             generic map(addr_width => addr_width, data_width => data_width)
-            port map (clock => clock ,halt => halt_aux, instruction_in =>instruction_in_aux, instruction_addr =>instruction_addr ,data_read =>mem_data_read,data_write =>mem_data_write,data_addr =>mem_data_addr , data_in =>mem_data_in_aux , data_out =>mem_data_out_aux ,codec_interrupt =>codec_interrupt_aux,codec_read =>codec_read_aux,codec_write =>codec_write_aux,codec_valid =>codec_valid_aux,codec_data_out =>codec_data_out_aux,codec_data_in =>codec_data_in_aux);
+            port map (clock => clock ,halt => halt_aux, instruction_in =>instruction_in_aux, instruction_addr =>instruction_addr, mem_data_read =>mem_data_read, mem_data_write =>mem_data_write, mem_data_addr => mem_data_addr, mem_data_in => mem_data_in_aux, mem_data_out => mem_data_out_aux, codec_interrupt =>codec_interrupt_aux,codec_read =>codec_read_aux,codec_write =>codec_write_aux,codec_valid =>codec_valid_aux,codec_data_out =>codec_data_out_aux,codec_data_in =>codec_data_in_aux);
 -- usar codec--
 Codec :  entity work.codec(behavioral)
             port map (clock => clock, interrupt=>codec_interrupt_aux, read_signal=> codec_read_aux, write_signal=>codec_write_aux, valid=>codec_valid_aux, codec_data_in=>codec_data_in_aux, codec_data_out=>codec_data_out_aux);
